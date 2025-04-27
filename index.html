@@ -92,11 +92,18 @@
     #saveToDrive {
       background: #0f9d58;
       color: white;
+      position: relative;
     }
     .status {
       text-align: center;
       margin-top: 10px;
-      color: #666;
+      min-height: 20px;
+    }
+    .error {
+      color: #d32f2f;
+    }
+    .success {
+      color: #0f9d58;
     }
     .loading {
       display: inline-block;
@@ -106,9 +113,14 @@
       border-radius: 50%;
       border-top-color: #fff;
       animation: spin 1s ease-in-out infinite;
+      margin-left: 10px;
+      vertical-align: middle;
     }
     @keyframes spin {
       to { transform: rotate(360deg); }
+    }
+    .button-text {
+      vertical-align: middle;
     }
   </style>
 </head>
@@ -225,7 +237,7 @@
 // Configuration
 const DRIVE_FOLDER_ID = 'vylRzy1h4Oxmyxf_cwoSMW3tqEcGx6O7';
 const CLIENT_ID = '141919593384-h4crkaj0dl3n75n2cdtnkktp0oaue5ht.apps.googleusercontent.com';
-const API_KEY = 'YOUR_GOOGLE_API_KEY'; // Replace with your actual API key
+const API_KEY = 'AIzaSyBFTHP_2mcLoStTlhpoAaCFcBT_pgyZUOw'; // Replace with your actual API key
 
 // Advisor data
 const ADVISORS = {
