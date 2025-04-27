@@ -1,8 +1,12 @@
 const CLIENT_ID = '752750464212-9846882gui0ok3l7msbn6g7506nt68c2.apps.googleusercontent.com';
 const API_KEY = 'AIzaSyDNdSllJiBSOe8WJ-5kgzzs3OGtSxPSXHQ';
 
+const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
 const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+
 let tokenClient;
+let gapiInited = false;
+let gisInited = false;
 
 const guruData = {
   "PENGAKAP": ["CIKGU SUHAILA ABDUL HALIP", "CIKGU MOHAMMAD HAFIZ SHAMSUDDIN", "CIKGU ZUBAIR KASSIM", "CIKGU YASMIN HUZAIMAH ALADDIN", "CIKGU MASZURA HASIM", "CIKGU HAMSIAH RAPAEE", "CIKGU WATI AHMAD"],
@@ -50,26 +54,32 @@ function gapiLoaded() {
   gapi.load('client', initializeGapiClient);
 }
 
-async function initializeGapiClient() {
-  await gapi.client.init({
-    apiKey: API_KEY,
-    discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
-  });
-}
-
+// Bila GSI client loaded
 function gisLoaded() {
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
-    callback: '',
+    callback: '', // will be set later
   });
+  gisInited = true;
 }
 
+// Init GAPI client
+async function initializeGapiClient() {
+  await gapi.client.init({
+    apiKey: API_KEY,
+    discoveryDocs: [DISCOVERY_DOC],
+  });
+  gapiInited = true;
+}
+
+// Handle LOGIN button
 function handleAuthClick() {
   tokenClient.callback = async (resp) => {
     if (resp.error !== undefined) throw (resp);
-    alert('Login Google Berjaya!');
+    alert('Login berjaya!');
   };
+
   if (gapi.client.getToken() === null) {
     tokenClient.requestAccessToken({ prompt: 'consent' });
   } else {
@@ -77,7 +87,13 @@ function handleAuthClick() {
   }
 }
 
+// Upload PDF to Google Drive
 async function uploadToDrive() {
+  if (gapi.client.getToken() === null) {
+    alert('Sila LOGIN GOOGLE dahulu!');
+    return;
+  }
+
   const laporanElement = document.getElementById('laporan');
 
   const opt = {
