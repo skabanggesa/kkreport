@@ -295,7 +295,7 @@
   }
 
   // Initialize Google API Client
-  const CLIENT_ID = '141919593384-h4crkaj0dl3n75n2cdtnkktp0oaue5ht.apps.googleusercontent.com';
+ const CLIENT_ID = '141919593384-h4crkaj0dl3n75n2cdtnkktp0oaue5ht.apps.googleusercontent.com';
   const API_KEY = 'AIzaSyBFTHP_2mcLoStTlhpoAaCFcBT_pgyZUOw';
   const DRIVE_FOLDER_ID = 'vylRzy1h4Oxmyxf_cwoSMW3tqEcGx6O7';
 
@@ -307,17 +307,32 @@
       discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
     }).then(() => {
       console.log("Google API Client Initialized");
+      gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
     });
   }
 
+  function updateSigninStatus(isSignedIn) {
+    if (isSignedIn) {
+      console.log('User signed in');
+    } else {
+      console.log('User not signed in');
+    }
+  }
+
+  // Function to sign in when button is clicked
   function handleAuthClick() {
     gapi.auth2.getAuthInstance().signIn().then(() => {
       console.log("Signed in");
-      generatePDF();
     });
   }
 
-  // Generate and upload PDF to Google Drive
+  function handleSignoutClick() {
+    gapi.auth2.getAuthInstance().signOut().then(() => {
+      console.log("Signed out");
+    });
+  }
+
+  // Function to generate and upload PDF to Google Drive
   function generatePDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -364,7 +379,23 @@
       }
     });
   }
+
+  function simpanLaporan() {
+    if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
+      handleAuthClick();
+      return;
+    }
+
+    generatePDF();
+  }
+
+  // Initialize the Google API client
+  function start() {
+    gapi.load('client:auth2', initGoogleClient);
+  }
 </script>
 
+<!-- Add this to the body section to trigger Google API loading -->
+<script async defer onload="start()"></script>
 </body>
 </html>
