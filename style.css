@@ -1,0 +1,73 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background: #f2f6ff;
+}
+
+.container {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.logo {
+  width: 80px;
+  display: block;
+  margin: 0 auto 10px auto;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #003366;
+}
+
+hr {
+  margin: 20px 0;
+  border: 1px solid #ccc;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+label {
+  font-weight: bold;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.laporan {
+  margin-top: 20px;
+}
+
+.buttons {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.buttons button {
+  background: #0056b3;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.buttons button:hover {
+  background: #003d80;
+}
