@@ -117,6 +117,9 @@
     .buttons {
       text-align: center;
       margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
     }
     button {
       padding: 10px 25px;
@@ -127,14 +130,27 @@
       cursor: pointer;
       font-weight: bold;
       transition: all 0.3s;
+      min-width: 180px;
     }
     button:hover {
       background: #2980b9;
       transform: translateY(-2px);
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
+    #saveToDrive {
+      background: #0f9d58;
+    }
+    #saveToDrive:hover {
+      background: #0b8043;
+    }
+    .signin-prompt {
+      display: none;
+      color: #d32f2f;
+      font-weight: bold;
+      margin-top: 10px;
+    }
     @media print {
-      button {
+      .buttons {
         display: none;
       }
       body {
@@ -152,8 +168,8 @@
 
 <div class="container">
   <div class="header">
-    <img src="logo.gif" alt="Logo Sekolah">
-    <h1>LAPORAN PERJUMPAAN MINGGUAN KOKURIKULUM</h1>
+    <img src="logo.png" alt="Logo Sekolah">
+    <h1>LAPORAN PERJUMPAAN KOKURIKULUM</h1>
     <h2>SK ABANG GESA</h2>
   </div>
 
@@ -251,10 +267,17 @@
 
   <div class="buttons">
     <button onclick="window.print()">CETAK LAPORAN</button>
+    <button id="saveToDrive">SIMPAN KE GOOGLE DRIVE</button>
   </div>
+  <div id="signinPrompt" class="signin-prompt">Sila log masuk ke Google untuk menyimpan ke Drive.</div>
 </div>
 
+<!-- Load the Google API client library -->
+<script src="https://apis.google.com/js/api.js"></script>
 <script>
+// Google Drive Folder ID
+const FOLDER_ID = 'vylRzy1h4Oxmyxf_cwoSMW3tqEcGx6O7';
+
 const guruPenasihatData = {
   "PENGAKAP": ["CIKGU SUHAILA ABDUL HALIP", "CIKGU MOHAMMAD HAFIZ SHAMSUDDIN", "CIKGU ZUBAIR KASSIM", "CIKGU YASMIN HUZAIMAH ALADDIN", "CIKGU MASZURA HASIM", "CIKGU HAMSIAH RAPAEE", "CIKGU WATI AHMAD"],
   "TKRS": ["CIKGU MOHAMAD NORIZAN MOHAMMAD", "CIKGU EDI HARIANTO SUYADI", "CIKGU DAUD AHMAD", "CIKGU MOHAMMAD NAJRI HAN", "USTAZ MUHAMMAD KHUSAIRI SENAN"],
@@ -293,6 +316,125 @@ function kiraJumlahKehadiran() {
   const jumlahKeseluruhan = tahun4 + tahun5 + tahun6;
   document.getElementById('jumlahKehadiranKeseluruhan').value = jumlahKeseluruhan;
 }
+
+// Google Drive Integration
+let googleAuth;
+
+function initClient() {
+  gapi.load('client:auth2', () => {
+    gapi.client.init({
+      apiKey: '',
+      clientId: '141919593384-h4crkaj0dl3n75n2cdtnkktp0oaue5ht.apps.googleusercontent.com',
+      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+      scope: "https://www.googleapis.com/auth/drive.file"
+    }).then(() => {
+      googleAuth = gapi.auth2.getAuthInstance();
+      
+      // Listen for sign-in state changes
+      googleAuth.isSignedIn.listen(updateSigninStatus);
+      
+      // Handle initial sign-in state
+      updateSigninStatus(googleAuth.isSignedIn.get());
+      
+      // Listen for click on save button
+      document.getElementById('saveToDrive').addEventListener('click', () => {
+        if (googleAuth.isSignedIn.get()) {
+          saveToGoogleDrive();
+        } else {
+          googleAuth.signIn();
+        }
+      });
+    }).catch(err => {
+      console.error('Error initializing Google API:', err);
+    });
+  });
+}
+
+function updateSigninStatus(isSignedIn) {
+  const prompt = document.getElementById('signinPrompt');
+  if (isSignedIn) {
+    prompt.style.display = 'none';
+  } else {
+    prompt.style.display = 'block';
+  }
+}
+
+async function saveToGoogleDrive() {
+  try {
+    // Get form data
+    const formData = {
+      tarikh: document.getElementById('tarikh').value,
+      masaMula: document.getElementById('masaMula').value,
+      masaTamat: document.getElementById('masaTamat').value,
+      tempat: document.getElementById('tempat').value,
+      organisasi: document.getElementById('organisasi').value,
+      jumlahTahun4: document.getElementById('jumlahTahun4').value,
+      jumlahTahun5: document.getElementById('jumlahTahun5').value,
+      jumlahTahun6: document.getElementById('jumlahTahun6').value,
+      jumlahKehadiranKeseluruhan: document.getElementById('jumlahKehadiranKeseluruhan').value,
+      guruPenasihat: document.getElementById('guruPenasihat').value,
+      laporan: document.getElementById('laporan').value
+    };
+
+    // Create a filename with date and organization
+    const filename = `Laporan Kokurikulum ${formData.organisasi} - ${formData.tarikh}.txt`;
+    
+    // Create file content
+    let fileContent = `LAPORAN PERJUMPAAN KOKURIKULUM\n`;
+    fileContent += `SK ABANG GESA\n\n`;
+    fileContent += `Tarikh: ${formData.tarikh}\n`;
+    fileContent += `Masa: ${formData.masaMula} - ${formData.masaTamat}\n`;
+    fileContent += `Tempat: ${formData.tempat}\n`;
+    fileContent += `Organisasi: ${formData.organisasi}\n\n`;
+    fileContent += `KEHADIRAN\n`;
+    fileContent += `Jumlah Tahun 4: ${formData.jumlahTahun4}\n`;
+    fileContent += `Jumlah Tahun 5: ${formData.jumlahTahun5}\n`;
+    fileContent += `Jumlah Tahun 6: ${formData.jumlahTahun6}\n`;
+    fileContent += `Jumlah Keseluruhan: ${formData.jumlahKehadiranKeseluruhan}\n\n`;
+    fileContent += `GURU PENASIHAT\n${formData.guruPenasihat}\n\n`;
+    fileContent += `LAPORAN PERJUMPAAN\n${formData.laporan}`;
+
+    // Create file metadata
+    const fileMetadata = {
+      name: filename,
+      mimeType: 'text/plain',
+      parents: [FOLDER_ID]
+    };
+
+    // Create file content blob
+    const fileContentBlob = new Blob([fileContent], {type: 'text/plain'});
+
+    // Create form data for upload
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify(fileMetadata)], {type: 'application/json'}));
+    form.append('file', fileContentBlob);
+
+    // Upload to Google Drive
+    const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method: 'POST',
+      headers: new Headers({
+        'Authorization': 'Bearer ' + gapi.auth.getToken().access_token
+      }),
+      body: form
+    });
+    
+    const data = await response.json();
+    alert('Laporan berjaya disimpan ke Google Drive!');
+    console.log('File saved to Google Drive:', data);
+  } catch (error) {
+    console.error('Error saving to Google Drive:', error);
+    alert('Gagal menyimpan ke Google Drive: ' + error.message);
+  }
+}
+
+// Initialize the app when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  updateGuruPenasihat();
+  kiraJumlahKehadiran();
+  
+  // Load Google API
+  initClient();
+});
 </script>
 
 </body>
