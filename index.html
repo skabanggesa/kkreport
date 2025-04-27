@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laporan Kokurikulum SK Abang Gesa</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 25px;
+      border: 1px solid #ddd;
+      background-color: white;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+      position: relative;
+      padding-top: 60px;
+    }
+    .header img {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 50px;
+    }
+    .header h1 {
+      margin: 10px 0 0;
+      font-size: 18pt;
+      text-decoration: underline;
+      color: #2c3e50;
+    }
+    .header h2 {
+      margin: 5px 0 0;
+      font-size: 14pt;
+      color: #7f8c8d;
+    }
+    .form-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .form-row {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #2c3e50;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #bdc3c7;
+      background: #ecf0f1;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #3498db;
+      box-shadow: 0 0 5px rgba(52,152,219,0.5);
+      outline: none;
+      background: white;
+    }
+    .full-width {
+      grid-column: 1 / 3;
+    }
+    .kehadiran-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+    .kehadiran-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 5px 10px;
+      background-color: white;
+      border-radius: 4px;
+    }
+    .kehadiran-item span {
+      font-weight: bold;
+      color: #34495e;
+    }
+    .kehadiran-item input {
+      width: 70px;
+      text-align: right;
+      background-color: #f8f9fa;
+    }
+    textarea {
+      height: 120px;
+      resize: vertical;
+    }
+    .section-title {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 5px;
+      margin-bottom: 15px;
+    }
+    .buttons {
+      text-align: center;
+      margin-top: 25px;
+    }
+    button {
+      padding: 10px 25px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    button:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    @media print {
+      button {
+        display: none;
+      }
+      body {
+        background: none;
+        padding: 0;
+      }
+      .container {
+        box-shadow: none;
+        border: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <img src="logo.gif" alt="Logo Sekolah">
+    <h1>LAPORAN PERJUMPAAN MINGGUAN KOKURIKULUM</h1>
+    <h2>SK ABANG GESA</h2>
+  </div>
+
+  <div class="form-section">
+    <!-- Kolum Kiri -->
+    <div>
+      <div class="form-row">
+        <label for="tarikh">TARIKH</label>
+        <input type="date" id="tarikh" name="tarikh" required>
+      </div>
+      
+      <div class="form-row">
+        <label>MASA MULA - MASA AKHIR</label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="time" id="masaMula" name="masaMula" style="flex: 1;">
+          <span style="color: #7f8c8d;">-</span>
+          <input type="time" id="masaTamat" name="masaTamat" style="flex: 1;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Kolum Kanan -->
+    <div>
+      <div class="form-row">
+        <label for="tempat">TEMPAT</label>
+        <input type="text" id="tempat" name="tempat" required>
+      </div>
+      
+      <div class="form-row">
+        <label for="organisasi">ORGANISASI</label>
+        <select id="organisasi" name="organisasi" required onchange="updateGuruPenasihat()">
+          <option value="">-- Pilih Organisasi --</option>
+          <option value="PENGAKAP">PENGAKAP</option>
+          <option value="TKRS">TKRS</option>
+          <option value="PPIM">PPIM</option>
+          <option value="BSMM">BSMM</option>
+          <option value="KELAB BAHASA MELAYU">KELAB BAHASA MELAYU</option>
+          <option value="KELAB BAHASA INGGERIS">KELAB BAHASA INGGERIS</option>
+          <option value="KELAB STEM">KELAB STEM</option>
+          <option value="KELAB PENDIDIKAN ISLAM">KELAB PENDIDIKAN ISLAM</option>
+          <option value="KELAB PENCINTA ALAM">KELAB PENCINTA ALAM</option>
+          <option value="KELAB SENI DAN KEBUDAYAAN">KELAB SENI DAN KEBUDAYAAN</option>
+          <option value="KELAB SPBT">KELAB SPBT</option>
+          <option value="BOLA SEPAK">BOLA SEPAK</option>
+          <option value="BOLA JARING">BOLA JARING</option>
+          <option value="OLAHRAGA">OLAHRAGA</option>
+          <option value="HOKI">HOKI</option>
+          <option value="MEMANAH">MEMANAH</option>
+          <option value="PINGPONG">PINGPONG</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Kehadiran Section -->
+    <div class="full-width">
+      <h3 class="section-title">KEHADIRAN</h3>
+      <div class="kehadiran-section">
+        <div>
+          <div class="kehadiran-item">
+            <span>Jumlah Tahun 4:</span>
+            <input type="number" id="jumlahTahun4" name="jumlahTahun4" min="0" oninput="kiraJumlahKehadiran()">
+          </div>
+          <div class="kehadiran-item">
+            <span>Jumlah Tahun 5:</span>
+            <input type="number" id="jumlahTahun5" name="jumlahTahun5" min="0" oninput="kiraJumlahKehadiran()">
+          </div>
+          <div class="kehadiran-item">
+            <span>Jumlah Tahun 6:</span>
+            <input type="number" id="jumlahTahun6" name="jumlahTahun6" min="0" oninput="kiraJumlahKehadiran()">
+          </div>
+          <div class="kehadiran-item" style="background-color: #e3f2fd;">
+            <span style="font-weight: bold; color: #0d47a1;">Jumlah Keseluruhan:</span>
+            <input type="text" id="jumlahKehadiranKeseluruhan" name="jumlahKehadiranKeseluruhan" readonly style="font-weight: bold; color: #0d47a1; background-color: #e3f2fd;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guru Penasihat -->
+    <div class="full-width">
+      <div class="form-row">
+        <label for="guruPenasihat">NAMA GURU PENASIHAT</label>
+        <textarea id="guruPenasihat" name="guruPenasihat" readonly style="background-color: #f5f5f5;"></textarea>
+      </div>
+    </div>
+
+    <!-- Laporan Perjumpaan -->
+    <div class="full-width">
+      <div class="form-row">
+        <label for="laporan">LAPORAN PERJUMPAAN</label>
+        <textarea id="laporan" name="laporan" placeholder="Sila isi laporan perjumpaan di sini..." style="background-color: #fff8e1;"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button onclick="window.print()">CETAK LAPORAN</button>
+  </div>
+</div>
+
+<script>
+const guruPenasihatData = {
+  "PENGAKAP": ["CIKGU SUHAILA ABDUL HALIP", "CIKGU MOHAMMAD HAFIZ SHAMSUDDIN", "CIKGU ZUBAIR KASSIM", "CIKGU YASMIN HUZAIMAH ALADDIN", "CIKGU MASZURA HASIM", "CIKGU HAMSIAH RAPAEE", "CIKGU WATI AHMAD"],
+  "TKRS": ["CIKGU MOHAMAD NORIZAN MOHAMMAD", "CIKGU EDI HARIANTO SUYADI", "CIKGU DAUD AHMAD", "CIKGU MOHAMMAD NAJRI HAN", "USTAZ MUHAMMAD KHUSAIRI SENAN"],
+  "PPIM": ["USTAZAH LAILA SYAFINAZ HASSAN", "USTAZAH IZZATI BAHIYAH SALIM", "CIKGU NURHASHIMAH NABILA ABDULLAH", "CIKGU MIMUT KHAIRIYAH KONGLI", "USTAZAH NORHIDAYATI WAHAB", "USTAZAH AZREEN KAMARUDIN", "USTAZAH SITI ZULAIKHA HJ TEMRIN"],
+  "BSMM": ["CIKGU KHAIRUL NIZAM RAJALI", "CIKGU KHAIRUL NISA MOHAMMAD BASERI", "CIKGU SITI AISHAH MUHALADDIN", "CIKGU ARZURRA ZAINUDDIN", "CIKGU NURUL SYUHADA ABDUL MUTALIF"],
+  "KELAB BAHASA MELAYU": ["CIKGU DAUD AHMAD", "CIKGU WATI AHMAD", "CIKGU HAMSIAH RAPAEE", "CIKGU MIMUT KHAIRIYAH KONGLI"],
+  "KELAB BAHASA INGGERIS": ["CIKGU MASZURA HASIM", "CIKGU ZUBAIR KASSIM", "CIKGU EDI HARIANTO SUYADI"],
+  "KELAB STEM": ["CIKGU NURHASHIMAH NABILA ABDULLAH", "CIKGU SUHAILA ABDUL HALIP", "USTAZAH LAILA SYAFINAZ HASSAN", "CIKGU SUZIE ABDULLAH"],
+  "KELAB PENCINTA ALAM": ["CIKGU MOHAMMAD NAJRI HAN", "CIKGU HALUYAH HOP", "CIKGU MOHAMAD NORIZAN MOHAMMAD", "CIKGU NURUL SYUHADA ABDUL MUTALIF", "PUAN KEMUTING AYONG"],
+  "KELAB SENI DAN KEBUDAYAAN": ["CIKGU WATI AHMAD", "CIKGU KHAIRUL NIZAM RAJALI", "CIKGU YASMIN HUZAIMAH ALADDIN", "CIKGU KHAIRUL NISA MOHAMMAD BASERI", "PUAN NOREETA ANAK MANDAU", "PUAN HAJIBAH SALLEH", "PUAN AINI DAMIT"],
+  "KELAB PENDIDIKAN ISLAM": ["USTAZ MUHAMMAD KHUSAIRI SENAN", "USTAZAH NORHIDAYATI WAHAB", "USTAZAH AZREEN KAMARUDIN", "USTAZAH SITI ZULAIKHA HJ TEMRIN"],
+  "KELAB SPBT": ["CIKGU ARZURRA ZAINUDDIN", "CIKGU SITI AISHAH MUHALADDIN", "CIKGU MOHAMMAD HAFIZ SHAMSUDDIN", "USTAZAH IZZATI BAHIYAH SALIM"],
+  "BOLA SEPAK": ["CIKGU ZUBAIR KASSIM", "CIKGU MOHAMMAD NAJRI HAN", "CIKGU ABDUL JALIL SAIM"],
+  "BOLA JARING": ["USTAZAH AZREEN KAMARUDIN", "USTAZAH LAILA SYAFINAZ HASSAN", "CIKGU WATI AHMAD", "CIKGU MIMUT KHAIRIYAH KONGLI", "CIKGU HALUYAH HOP", "USTAZAH IZZATI BAHIYAH SALIM"],
+  "OLAHRAGA": ["CIKGU KHAIRUL NIZAM RAJALI", "CIKGU ARZURRA ZAINUDDIN", "CIKGU NURHASHIMAH NABILA ABDULLAH", "USTAZAH SITI ZULAIKHA HJ TEMRIN", "CIKGU KHAIRUL NISA MOHAMMAD BASERI"],
+  "HOKI": ["CIKGU DAUD AHMAD", "CIKGU MOHAMMAD HAFIZ SHAMSUDDIN", "CIKGU MASZURA HASIM", "USTAZAH NORHIDAYATI WAHAB"],
+  "MEMANAH": ["CIKGU HAMSIAH RAPAEE", "CIKGU YASMIN HUZAIMAH ALADDIN", "CIKGU NURUL SYUHADA ABDUL MUTALIF", "CIKGU EDI HARIANTO SUYADI"],
+  "PINGPONG": ["CIKGU MOHAMAD NORIZAN MOHAMMAD", "USTAZ MUHAMMAD KHUSAIRI SENAN", "CIKGU SUHAILA ABDUL HALIP", "CIKGU SITI AISHAH MUHALADDIN"]
+};
+
+function updateGuruPenasihat() {
+  const organisasi = document.getElementById('organisasi').value;
+  const guruTextarea = document.getElementById('guruPenasihat');
+  if (guruPenasihatData[organisasi]) {
+    guruTextarea.value = guruPenasihatData[organisasi].join("\n");
+  } else {
+    guruTextarea.value = '';
+  }
+}
+
+function kiraJumlahKehadiran() {
+  const tahun4 = parseInt(document.getElementById('jumlahTahun4').value) || 0;
+  const tahun5 = parseInt(document.getElementById('jumlahTahun5').value) || 0;
+  const tahun6 = parseInt(document.getElementById('jumlahTahun6').value) || 0;
+
+  const jumlahKeseluruhan = tahun4 + tahun5 + tahun6;
+  document.getElementById('jumlahKehadiranKeseluruhan').value = jumlahKeseluruhan;
+}
+</script>
+
+</body>
+</html>
